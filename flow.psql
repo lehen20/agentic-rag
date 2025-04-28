@@ -1,0 +1,9 @@
+User input (via Gradio)
+     ↓
+Agent decides to use retriever tool
+     ↓
+Retrieved docs graded
+     ↙              ↘
+"yes" → generate     "no" → rewrite → agent (loop)
+     ↓
+Final answer returned
