@@ -1,0 +1,6 @@
+$3374b206-bd9a-4ddb-83f6-842cec162895²Ž"id ÿÿÿÿÿÿÿÿÿ*string8Zdefault&text ÿÿÿÿÿÿÿÿÿ*string8Zdefault(metadata ÿÿÿÿÿÿÿÿÿ*structZdefault#producer *string08Zdefault"creator *string08Zdefault'creationdate *string08Zdefault!source *string08Zdefault%total_pages *int6408Zdefaultpage *int6408Zdefault%
+page_label	 *string08Zdefault&vector
+ ÿÿÿÿÿÿÿÿÿ*list8Zdefaultitem 
+*double08Zdefault"!
+lance.auto_cleanup.interval20"'
+lance.auto_cleanup.older_than14days

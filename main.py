@@ -10,11 +10,11 @@ from langgraph.prebuilt import ToolNode
 from langchain_core.output_parsers import StrOutputParser
 from langgraph.graph import END, StateGraph, START
 from langchain_core.documents import Document
-from langchain_core.tools import Tool
+from langchain.tools.retriever import create_retriever_tool
 from langchain_core.messages import BaseMessage
 
 import gradio as gr
-from typing import Annotated, Dict, List, Literal, Sequence, TypedDict
+from typing import Annotated, Dict, List, Literal, Sequence, TypedDict, Optional
 from pydantic import BaseModel, Field
 import lancedb
 import re
@@ -57,27 +57,32 @@ for doc in documents:
 for doc in documents:
     doc.metadata = {}
 
-# Setup vector database
-db = lancedb.connect("/tmp/lancedb")
+# # Setup vector database
+# db = lancedb.connect("lancedb")
+db = lancedb.connect("my_lancedb")
+
+# Use LangChain or custom LanceDB wrapper to create the table
+table = db.create_table("docs", data=None)  # or `open_table` if already exists
 
 vectorstore = LanceDB.from_documents(
+
     documents=documents,
     embedding=embeddings_mini,
 )
 retriever = vectorstore.as_retriever()
 
 # Define tools
-# retriver_tool = create_retreiver_tool(
-    
-# )
-retriever_tool = Tool(
-    name="get_sql_query_from_pdf",
-    description="Generate an SQL query based on the user's question and database schema",
-    func=lambda input: retriever.invoke(input),
+retriever_tool = create_retriever_tool(
+    retriever,
+    "get_sql_query_from_pdf",
+    "Generate an SQL query based on the user's question and database schema"
 )
 
+# Converting retriever to a tool 
 tools = [retriever_tool]
-tool_executor = ToolNode(tools)
+
+# Converting tool to a node - used in langgraph
+retrieve = ToolNode(tools)
 
 
 # Define state
@@ -85,6 +90,12 @@ class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
     next: str
 
+def agent(state):
+    messages = state["messages"]
+    model = ChatOllama(model="llama3.1", temperature=0)
+    model = model.bind_tools(tools)
+    response = model.invoke(messages)
+    return {"messages": [response]}
 
 # LangGraph node functions
 def route(
@@ -243,8 +254,8 @@ def extract_sql(text):
 workflow = StateGraph(AgentState)
 
 # Add nodes
-workflow.add_node("route", route)  # Entry node
-workflow.add_node("retrieve", retrieve_docs)
+workflow.add_node("agent", agent)  # Entry node
+workflow.add_node("retrieve", retrieve)
 workflow.add_node("rewrite_query", rewrite_query)
 workflow.add_node("generate_response", generate_sql)
 
@@ -257,7 +268,7 @@ workflow.add_edge("rewrite_query", "route")
 workflow.add_edge("generate_response", END)
 
 # Set the entrypoint
-workflow.add_edge(START, "route")
+workflow.add_edge(START, "agent")
 
 # Compile the graph
 graph = workflow.compile()
