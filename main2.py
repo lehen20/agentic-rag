@@ -8,23 +8,19 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage
 from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_core.output_parsers import StrOutputParser
-from langgraph.graph import END, StateGraph, START
-from langchain_core.documents import Document
+from langgraph.graph import END, StateGraph
 from langchain.tools.retriever import create_retriever_tool
 from langchain_core.messages import BaseMessage
 from langchain import hub
 import gradio as gr
-from typing import Annotated, Dict, List, Literal, Sequence, TypedDict, Optional
+from typing import Annotated, Literal, Sequence, TypedDict
 from pydantic import BaseModel, Field
-import re
-import json
 import lancedb
 from src.redis import get_redis
 from src.model import model
 from lancedb.pydantic import Vector, LanceModel
-from typing import Dict, Any
 import pyarrow as pa
-import numpy as np
+
 # Initialize Redis and model
 get_redis()
 model = model
@@ -101,7 +97,7 @@ retriever_tool = create_retriever_tool(
 )
 
 tools = [retriever_tool]
-tool_executor = ToolNode(tools)
+retrieve = ToolNode(tools)
 
 
 class AgentState(TypedDict):
@@ -184,7 +180,7 @@ def generate(state):
 
 workflow = StateGraph(AgentState)
 workflow.add_node("agent", agent)
-retrieve = ToolNode([retriever_tool])
+# retrieve = ToolNode([retriever_tool])
 workflow.add_node("retrieve", retrieve)
 workflow.add_node("rewrite", rewrite)
 workflow.add_node("generate", generate)
@@ -207,16 +203,11 @@ def process_message(user_message):
             messages = output["generate"]["messages"]
             content_output = messages[0] if messages else None
             print(f"Extracted content: {content_output}") 
-            # if messages and hasattr(messages[0], "content"):
-            #     content_output = messages[0].content  # Accessing attribute directly
-            #     print(f"Extracted content: {content_output}")  # Print extracted content
+
     return content_output if content_output else "No relevant output found."
 
 
-# Define example questions to guide the user
-example_questions = [
-    "explain me in short what is PM Gati Shakti National Master Plan (NMP)?"
-]
+
 
 # Create a Gradio interface
 iface = gr.Interface(
@@ -224,8 +215,7 @@ iface = gr.Interface(
     inputs="text",
     outputs="text",
     title="Agentic RAG ",
-    description="Enter a message to query related to export import .",
-    examples=example_questions,
+    description="Enter a message to query",
 )
 
 # Launch the Gradio app
