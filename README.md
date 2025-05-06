@@ -24,7 +24,7 @@ This project is an **Agentic Retrieval-Augmented Generation (RAG)** pipeline bui
 git clone https://github.com/lehen20/agentic-rag.git
 cd agentic-rag
 
-
+```
 2. **Create a virtual environment and install dependencies**
 
 ```bash
