@@ -1,0 +1,15 @@
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  device: "cuda:0"
+
+llm:
+  model: "llama3.1"
+  temperature: 0.3
+
+pdf:
+  folder_path: "docs"

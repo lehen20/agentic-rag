@@ -1,2 +1,0 @@
-- store embeddings from pdf
-retrieve by prompt
