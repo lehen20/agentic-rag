@@ -1,23 +1,23 @@
-# 🧠 Agentic RAG System with LangGraph, LanceDB, and Ollama
+# Agentic RAG System with LangGraph, LanceDB, and Ollama
 
 This project is an **Agentic Retrieval-Augmented Generation (RAG)** pipeline built using [LangGraph](https://github.com/langchain-ai/langgraph), [LangChain](https://github.com/langchain-ai/langchain), [LanceDB](https://github.com/lancedb/lancedb), and [Ollama](https://ollama.com/). It uses PDF documents as knowledge base, retrieves relevant context using vector search, and answers questions using an LLM agent with tool use and grading capabilities.
 
 ---
 
-## 🚀 Features
+## Features
 
-- 📁 PDF ingestion with metadata extraction
-- 🔍 Document chunking & vector embedding via `all-MiniLM-L6-v2`
-- 🧠 Retrieval using LanceDB
-- 🔄 Agent decision making using LangGraph (tool vs end)
-- ✅ Grading of document relevance before final generation
-- 🗣️ Ollama's LLaMA3.1 used for all language tasks
-- 🌐 Frontend powered by Gradio
-- ⚡ Redis-backed LLM caching
+- PDF ingestion with metadata extraction
+- Document chunking & vector embedding via `all-MiniLM-L6-v2`
+- Retrieval using LanceDB
+- Agent decision making using LangGraph (tool vs end)
+- Grading of document relevance before final generation
+- Ollama's LLaMA3.1 used for all language tasks
+- Frontend powered by Gradio
+- Redis-backed LLM caching
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 1. **Clone the repo**  
 ```bash
