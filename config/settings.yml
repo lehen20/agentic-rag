@@ -9,7 +9,7 @@ embedding:
 
 llm:
   model: "llama3.1"
-  temperature: 0.3
+  temperature: 0.1
 
 pdf:
   folder_path: "docs"
